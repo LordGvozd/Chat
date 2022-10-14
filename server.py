@@ -26,16 +26,19 @@ class Server:
             nowtime = 'durak'
             
             print("["+addr[0]+"]=["+nowtime+"]")
-            print(data.decode("utf-8"))
+
+            try:
+                print(data.decode("utf-8"))
+            except:
+                self.server.sendto(("Use only english!").encode("utf-8"), addr[0])
+
 
 
             if (addr not in self.clients):
                 self.clients.append(addr)
 
-
-
             for client in self.clients:
-                if (addr !=addr[0]):
+                if (client !=addr[0]):
                     self.server.sendto(data, client)
 
 
