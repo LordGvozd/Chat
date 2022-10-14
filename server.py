@@ -40,8 +40,8 @@ class Server:
 
 
             for client in self.clients:
-                if (client !=addr[0]):
-                    print(client, addr[0])
+                if (client[0] !=addr[0]):
+
                     self.server.sendto(data, client)
 
 
