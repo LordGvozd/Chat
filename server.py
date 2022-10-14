@@ -17,8 +17,10 @@ class Server:
     def start(self):
         self.run = True
         print("Server started")
-
+        self.server.listen(10)
         while self.run:
+
+
             data, addr = self.server.recvfrom(1024)
             
             nowtime = time.strftime("%d-%m-%Y %H:%M:%s", time.localtime())
