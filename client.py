@@ -18,7 +18,7 @@ class Client():
     def run(self, server_ip):
         server = (server_ip, 7878)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.bind((self.host, 0))
+        #s.bind((self.host, 0))
         #s.setblocking(0)
 
         name = input("Name: ")
