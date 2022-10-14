@@ -16,7 +16,7 @@ class Client():
                 data, addr = sock.recvfrom(1024)
                 print(data.decode("utf-8"))
     def run(self, server_ip):
-        server = (server_ip, 7878)
+        server = ("94.228.112.236", 7878)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.bind((self.host, 0))
         #s.setblocking(0)
@@ -49,7 +49,7 @@ class Client():
 
 if __name__ =="__main__":
     client = Client(socket.gethostbyname(socket.gethostname()), 8787)
-    client.run("94.228.112.236")
+    client.run(socket.gethostbyname(socket.gethostname()))
 
 
 

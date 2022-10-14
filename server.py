@@ -23,7 +23,7 @@ class Server:
 
             data, addr = self.server.recvfrom(1024)
             
-            nowtime = time.strftime("%d-%m-%Y %H:%M:%s", time.localtime())
+            nowtime = 'durak'
             
             print("["+addr[0]+"]=["+nowtime+"]")
             print(data.decode("utf-8"))
@@ -49,5 +49,5 @@ class Server:
 
 
 if __name__ == "__main__":
-    server = Server(socket.gethostbyname(socket.gethostname()), 7878)
+    server = Server("0.0.0.0", 7878)
     server.start()
