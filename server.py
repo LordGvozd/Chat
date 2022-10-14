@@ -17,7 +17,7 @@ class Server:
     def start(self):
         self.run = True
         print("Server started")
-        
+
         while self.run:
 
 
@@ -41,6 +41,7 @@ class Server:
 
             for client in self.clients:
                 if (client !=addr[0]):
+                    print(client, addr[0])
                     self.server.sendto(data, client)
 
 

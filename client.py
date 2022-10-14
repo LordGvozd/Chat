@@ -20,7 +20,7 @@ class Client():
     def run(self, server_ip):
         server = ("94.228.112.236", 7322)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #s.listen(1)
+        #s.listen(2)
        # s.bind((self.host, 0))
         #s.setblocking(1)
 
