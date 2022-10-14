@@ -19,19 +19,12 @@ class Server:
         print("Server started")
 
         while self.run:
-
-
             data, addr = self.server.recvfrom(1024)
             
-            nowtime = 'durak'
+            nowtime = time.strftime("%d-%m-%Y %H:%M:%s", time.localtime())
             
             print("["+addr[0]+"]=["+nowtime+"]")
-
-            try:
-
-                print(data.decode("utf-8"))
-            except:
-                self.server.sendto(("Pishi na angliskom, byak!!").encode("utf-8"), addr)
+            print(data.decode("utf-8"))
 
 
             if (addr not in self.clients):
@@ -40,8 +33,7 @@ class Server:
 
 
             for client in self.clients:
-                if (client[0] !=addr[0]):
-
+                if (addr !=addr[0]):
                     self.server.sendto(data, client)
 
 
@@ -55,5 +47,5 @@ class Server:
 
 
 if __name__ == "__main__":
-    server = Server("0.0.0.0", 7322)
+    server = Server(socket.gethostbyname(socket.gethostname()), 7878)
     server.start()
