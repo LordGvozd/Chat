@@ -17,7 +17,7 @@ class Server:
     def start(self):
         self.run = True
         print("Server started")
-        #self.server.listen(10)
+        self.server.listen(10)
         while self.run:
 
 

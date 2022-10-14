@@ -13,16 +13,14 @@ class Client():
         
         while not  self.shutdown:
             while True:
-                try:
-                    data, addr = sock.recvfrom(1024)
-                    print(data.decode("utf-8"))
-                except:
-                    pass
+
+                data, addr = sock.recvfrom(1024)
+                print(data.decode("utf-8"))
     def run(self, server_ip):
         server = ("94.228.112.236", 7878)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
        # s.bind((self.host, 0))
-        #s.setblocking(0)
+        s.setblocking(1)
 
         name = input("Name: ")
 
