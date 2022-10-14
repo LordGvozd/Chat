@@ -24,7 +24,11 @@ class Server:
             nowtime = time.strftime("%d-%m-%Y %H:%M:%s", time.localtime())
             
             print("["+addr[0]+"]=["+nowtime+"]")
-            print(data.decode("utf-8"))
+
+            try:
+                print(data.decode("utf-8"))
+            except:
+                pass
 
 
             if (addr not in self.clients):
@@ -33,7 +37,7 @@ class Server:
 
 
             for client in self.clients:
-                if (addr !=addr[0]):
+                if (client[0] !=addr[0]):
                     self.server.sendto(data, client)
 
 
