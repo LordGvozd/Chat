@@ -31,7 +31,7 @@ class Server:
 
                 print(data.decode("utf-8"))
             except:
-                self.server.sendto(("Pishi na angliskom, byak!!").encode("utf-8"), addr[0])
+                self.server.sendto(("Pishi na angliskom, byak!!").encode("utf-8"), addr)
 
 
             if (addr not in self.clients):

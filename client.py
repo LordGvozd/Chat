@@ -10,9 +10,10 @@ class Client():
         self.join = False
 
     def receving(self,name, sock):
-        
-        while not  self.shutdown:
+
+        while not self.shutdown:
             while True:
+
 
                 data, addr = sock.recvfrom(1024)
                 print(data.decode("utf-8"))
