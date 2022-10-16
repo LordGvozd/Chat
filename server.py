@@ -1,55 +1,67 @@
-import socket, time
+import socket
+import threading
 
-class Server:
+import settings
+
+
+class Chat:
     def __init__(self, host, port):
         self.host = host
         self.port = port
 
-        self.clients = []
-
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.server.bind((self.host, self.port))
-        
+        self.server = None
         self.run = False
 
-        print("Server init")
+        self.clients = []
+        self.nicknames = []
 
+    # Starting server
     def start(self):
+
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((self.host, self.port))
+        self.server.listen(10)
+
+        self.receive()
         self.run = True
-        print("Server started")
 
-        while self.run:
-            data, addr = self.server.recvfrom(1024)
-            
-            nowtime = time.strftime("%d-%m-%Y %H:%M:%s", time.localtime())
-            
-            print("["+addr[0]+"]=["+nowtime+"]")
+    # Sending message to all connected client
+    def broadcast(self, msg):
+        for client in self.clients:
+            client.send(msg)
 
+    def handle(self, client):
+        while True:
             try:
-                print(data.decode("utf-8"))
+                message = client.recv(1024)
+                self.broadcast(message)
             except:
-                pass
+                break
+
+    def receive(self):
+        while True:
+            client, addres = self.server.accept()
+            print("Connected with " + str(addres))
+
+            # Requests nick
+            client.send(("NICK").encode(settings.code))
+            nick = client.recv(1024).decode(settings.code)
+            self.nicknames.append(nick)
+            self.clients.append(client)
+
+            # Broadcast join
+            self.broadcast(("[{}] join to chat".format(nick).encode(settings.code)))
+
+            # Start threading with client
+            thread = threading.Thread(target=self.handle, args=(client, ))
+            thread.start()
 
 
-            if (addr not in self.clients):
-                self.clients.append(addr)
 
 
 
-            for client in self.clients:
-                if (client[0] !=addr[0]):
-                    self.server.sendto(data, client)
-
-
-        server.close()
-
-
-
-
-
-    
 
 
 if __name__ == "__main__":
-    server = Server(socket.gethostbyname(socket.gethostname()), 7878)
-    server.start()
+    chat = Chat(settings.server_host, settings.server_port)
+    chat.start()

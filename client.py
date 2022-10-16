@@ -1,55 +1,57 @@
-import socket, threading, time
+import socket
+import threading
 
-class Client():
-    def __init__(self, host, port, key=1111):
-        self.host = host
-        self.port = port
-        self.key = key
+import settings
 
-        self.shutdown = False
-        self.join = False
+class Client:
+    def __init__(self, port):
+        self.nickname = "Man"
 
-    def receving(self,name, sock):
-        
-        while not  self.shutdown:
-            while True:
-                data, addr = sock.recvfrom(1024)
-                print(data.decode("utf-8"))
-    def run(self, server_ip):
-        server = (server_ip, 7878)
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #s.bind((self.host, 0))
-        #s.setblocking(0)
-
-        name = input("Name: ")
-
-        rT = threading.Thread(target = self.receving, args = ("RecvThread", s))
-        rT.start()
-
-        while self.shutdown == False:
-            if (self.join == False):
-                s.sendto((("["+name+"] join chat")).encode("utf-8"), server)
-                self.join = True
-            else:
-                try:
-                    message = input(": ")
-                    if(message != ""):
-                        s.sendto((("["+name+"] => "+message)).encode("utf-8"), server)
-
-                        time.sleep(0.2)
-                except:
-                    print("Byka error - you debil")
-        rT.join()
-        s.close()
+        self.client = None
 
 
+
+    def start(self):
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.connect((settings.server_ip, settings.server_port))
+
+        receive_thread = threading.Thread(target=self.receive)
+        receive_thread.start()
+
+        write_thread = threading.Thread(target=self.write)
+        write_thread.start()
+
+    def receive(self):
+        while True:
+            try:
+                message = self.client.recv(1024).decode(settings.code)
+                if (message == "NICK"):
+                    self.client.send(self.nick().encode(settings.code))
+                else:
+                    print(message)
+            except:
+                print("Error 304: Egor kill you")
+
+    def write(self):
+        while True:
+            msg = "[{}] => {}".format(self.nickname, input(""))
+            self.client.send(msg.encode(settings.code))
+
+    def nick(self):
+
+        self.nick = input("First say you name: ")
+        return self.nick
 
 
 
 
-if __name__ =="__main__":
-    client = Client(socket.gethostbyname(socket.gethostname()), 8787)
-    client.run("94.228.112.236")
+
+if __name__ == "__main__":
+    client = Client(settings.client_port)
+    client.start()
+
+
+
 
 
 
