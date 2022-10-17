@@ -30,15 +30,8 @@ class Chat:
     # Sending message to all connected client
     def broadcast(self, msg):
         for client in self.clients:
-            try:
-                client.send(msg)
-            except:
-                print("{} dead".format(str(client)))
-                try:
-                    self.clients.remove(self.clients.index(client))
-                    client.close()
-                except:
-                    print("Error in broadcast")
+            client.send(msg)
+
 
 
     def handle(self, client):
@@ -47,6 +40,8 @@ class Chat:
                 message = client.recv(1024)
                 self.broadcast(message)
             except:
+                self.clients.remove(self.clients.index(client))
+                client.close()
                 break
 
     def receive(self):
