@@ -34,7 +34,10 @@ class Chat:
                 client.send(msg)
             except:
                 print("{} dead".format(str(client)))
-                self.clients.remove(self.clients.index(client))
+                try:
+                    self.clients.remove(self.clients.index(client))
+                except:
+                    print("Error in broadcast")
 
 
     def handle(self, client):

@@ -5,7 +5,7 @@ import settings
 
 class Client:
     def __init__(self, port):
-        self.nickname = "Man"
+        self.nickname = input("How are you? ")
 
         self.client = None
 
@@ -15,7 +15,7 @@ class Client:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((settings.server_ip, settings.server_port))
 
-        self.nick()
+
 
         receive_thread = threading.Thread(target=self.receive)
         receive_thread.start()
