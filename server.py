@@ -33,9 +33,9 @@ class Chat:
             try:
                 client.send(msg)
             except:
-                print("{} dead".format(str(client[0])))
+                print("{} dead".format(str(client)))
                 self.clients.remove(self.clients.index(client))
-                
+
 
     def handle(self, client):
         while True:

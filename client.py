@@ -15,6 +15,8 @@ class Client:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((settings.server_ip, settings.server_port))
 
+        self.nick()
+
         receive_thread = threading.Thread(target=self.receive)
         receive_thread.start()
 
@@ -26,7 +28,7 @@ class Client:
             try:
                 message = self.client.recv(1024).decode(settings.code)
                 if (message == "NICK"):
-                    self.client.send(self.nickname().encode(settings.code))
+                    self.client.send(self.nickname.encode(settings.code))
                 else:
                     print(message)
             except:
