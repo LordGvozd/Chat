@@ -55,7 +55,10 @@ class Chat:
             self.nicknames.append(nick)
             self.clients.append(client)
 
-            print("{} join".format(nick))
+            try:
+                print("{} join".format(nick))
+            except:
+                self.broadcast(("{}, pishi na angliyskom, byak".format(nick)).encode(settings.code))
 
             # Broadcast join
             self.broadcast(("[{}] join to chat".format(nick).encode(settings.code)))
