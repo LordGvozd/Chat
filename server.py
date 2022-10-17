@@ -36,6 +36,7 @@ class Chat:
                 print("{} dead".format(str(client)))
                 try:
                     self.clients.remove(self.clients.index(client))
+                    client.close()
                 except:
                     print("Error in broadcast")
 
