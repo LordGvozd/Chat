@@ -40,7 +40,7 @@ class Chat:
                 message = client.recv(1024)
                 self.broadcast(message)
             except:
-                self.clients.remove(self.clients.index(client))
+                self.clients.remove(client)
                 client.close()
                 break
 
