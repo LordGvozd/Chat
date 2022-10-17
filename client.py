@@ -26,7 +26,7 @@ class Client:
             try:
                 message = self.client.recv(1024).decode(settings.code)
                 if (message == "NICK"):
-                    self.client.send(self.nick().encode(settings.code))
+                    self.client.send(self.nickname().encode(settings.code))
                 else:
                     print(message)
             except:
@@ -40,7 +40,7 @@ class Client:
     def nick(self):
 
         self.nickname = input("First say you name: ")
-        return self.nick
+        return self.nickname
 
 
 if __name__ == "__main__":

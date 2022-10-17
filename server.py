@@ -30,7 +30,12 @@ class Chat:
     # Sending message to all connected client
     def broadcast(self, msg):
         for client in self.clients:
-            client.send(msg)
+            try:
+                client.send(msg)
+            except:
+                print("{} dead".format(str(client[0])))
+                self.clients.remove(self.clients.index(client))
+                
 
     def handle(self, client):
         while True:
