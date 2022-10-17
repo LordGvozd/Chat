@@ -39,11 +39,8 @@ class Client:
 
     def nick(self):
 
-        self.nick = input("First say you name: ")
+        self.nickname = input("First say you name: ")
         return self.nick
-
-
-
 
 
 if __name__ == "__main__":

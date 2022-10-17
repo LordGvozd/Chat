@@ -22,6 +22,8 @@ class Chat:
         self.server.bind((self.host, self.port))
         self.server.listen(10)
 
+        print("Server started")
+
         self.receive()
         self.run = True
 
@@ -49,17 +51,14 @@ class Chat:
             self.nicknames.append(nick)
             self.clients.append(client)
 
+            print("{} join".format(nick))
+
             # Broadcast join
             self.broadcast(("[{}] join to chat".format(nick).encode(settings.code)))
 
             # Start threading with client
             thread = threading.Thread(target=self.handle, args=(client, ))
             thread.start()
-
-
-
-
-
 
 
 if __name__ == "__main__":
