@@ -31,10 +31,7 @@ class Chat:
     def broadcast(self, msg, ignore_client="Not client, string"):
         for client in self.clients:
             if (client != ignore_client):
-                try:
-                    client.send(msg)
-                except Exception as e:
-                    print("Error in broadcast " + str(e))
+                client.send(msg)
 
     def handle(self, client):
         while True:
@@ -75,7 +72,7 @@ class Chat:
             self.broadcast(("[{}] join to chat".format(nick).encode(settings.code)))
 
             # Start threading with client
-            thread = threading.Thread(target=self.handle, args=(client, ))
+            thread = threading.Thread(target=self.handle, args=(client,))
             thread.start()
 
 
