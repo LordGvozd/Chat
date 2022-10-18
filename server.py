@@ -28,10 +28,13 @@ class Chat:
         self.run = True
 
     # Sending message to all connected client
-    def broadcast(self, msg, ignore_client=None):
+    def broadcast(self, msg, ignore_client="Not client, string"):
         for client in self.clients:
-            if(client != ignore_client):
-                client.send(msg)
+            if (client != ignore_client):
+                try:
+                    client.send(msg)
+                except Exception as e:
+                    print("Error in broadcast " + str(e))
 
     def handle(self, client):
         while True:
