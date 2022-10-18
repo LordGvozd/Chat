@@ -42,8 +42,17 @@ class Chat:
                 message = client.recv(1024)
                 self.broadcast(message, client)
             except:
+                index = self.clients.index(client)
+
                 self.clients.remove(client)
                 client.close()
+
+                nick = self.nicknames[index]
+                self.nicknames.remove(nick)
+
+                print("[{}] left the chat".format(nick))
+                self.broadcast("[{}] left the chat".format(nick))
+
                 break
 
     def receive(self):
