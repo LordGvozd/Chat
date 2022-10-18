@@ -3,19 +3,16 @@ import threading
 
 import settings
 
+
 class Client:
     def __init__(self, port):
         self.nickname = input("How are you? ")
 
         self.client = None
 
-
-
     def start(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((settings.server_ip, settings.server_port))
-
-
 
         receive_thread = threading.Thread(target=self.receive)
         receive_thread.start()
@@ -23,6 +20,7 @@ class Client:
         write_thread = threading.Thread(target=self.write)
         write_thread.start()
 
+    # Receive messages from another clients
     def receive(self):
         while True:
             try:
@@ -34,15 +32,11 @@ class Client:
             except:
                 print("Error 304: Egor kill you")
 
+    # Write message
     def write(self):
         while True:
             msg = "[{}] => {}".format(self.nickname, input(""))
             self.client.send(msg.encode(settings.code))
-
-    def nick(self):
-
-        self.nickname = input("First say you name: ")
-        return self.nickname
 
 
 if __name__ == "__main__":

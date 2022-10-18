@@ -28,17 +28,16 @@ class Chat:
         self.run = True
 
     # Sending message to all connected client
-    def broadcast(self, msg):
+    def broadcast(self, msg, ignore_client=None):
         for client in self.clients:
-            client.send(msg)
-
-
+            if(client != ignore_client):
+                client.send(msg)
 
     def handle(self, client):
         while True:
             try:
                 message = client.recv(1024)
-                self.broadcast(message)
+                self.broadcast(message, client)
             except:
                 self.clients.remove(client)
                 client.close()
