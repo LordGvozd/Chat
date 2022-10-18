@@ -48,7 +48,7 @@ class Chat:
                 self.nicknames.remove(nick)
 
                 print("[{}] left the chat".format(nick))
-                self.broadcast("[{}] left the chat".format(nick))
+                self.broadcast("[{}] left the chat".format(nick).encode(settings.code))
 
                 break
 
