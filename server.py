@@ -27,11 +27,28 @@ class Chat:
         self.receive()
         self.run = True
 
+    # Remove client
+    def remove_client(self, client):
+        index = self.clients.index(client)
+
+        self.clients.remove(client)
+        client.close()
+
+        nick = self.nicknames[index]
+        self.nicknames.remove(nick)
+
+        print("[{}] left the chat".format(nick))
+        self.broadcast("[{}] left the chat".format(nick).encode(settings.code))
+
     # Sending message to all connected client
     def broadcast(self, msg, ignore_client="Not client, string"):
         for client in self.clients:
-            if (client != ignore_client):
-                client.send(msg)
+            try:
+                if (client != ignore_client):
+                    client.send(msg)
+            except:
+                self.remove_client(client)
+
 
     def handle(self, client):
         while True:
@@ -39,17 +56,7 @@ class Chat:
                 message = client.recv(1024)
                 self.broadcast(message, client)
             except:
-                index = self.clients.index(client)
-
-                self.clients.remove(client)
-                client.close()
-
-                nick = self.nicknames[index]
-                self.nicknames.remove(nick)
-
-                print("[{}] left the chat".format(nick))
-                self.broadcast("[{}] left the chat".format(nick).encode(settings.code))
-
+                self.remove_client(client)
                 break
 
     def receive(self):
