@@ -2,7 +2,7 @@ import socket
 import threading
 
 import settings
-
+import json_utils
 
 class Client:
     def __init__(self, port):
@@ -24,13 +24,20 @@ class Client:
     def receive(self):
         while True:
             try:
-                message = self.client.recv(1024).decode(settings.code)
-                if (message == "NICK"):
-                    self.client.send(self.nickname.encode(settings.code))
-                else:
-                    print(message)
-            except:
-                print("Error 304: Egor kill you")
+                message = None
+                message_in_json = self.client.recv(1024).decode(settings.code)
+
+                if(message_in_json):
+                    message = json_utils.decode_json(message_in_json)
+                    if (message["title"] == "SYSTEM"):
+                        if(message["text"] == "NICK"):
+                            self.client.send(self.nickname.encode(settings.code))
+                    elif message["title"] == "MESSAGE":
+                        print(message["text"])
+                    else:
+                        print(message)
+            except Exception as error:
+                print("Error 304: Egor join the chat")
 
     # Write message
     def write(self):

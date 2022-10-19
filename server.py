@@ -1,6 +1,7 @@
 import socket
 import threading
 
+import json_utils
 import settings
 
 
@@ -49,7 +50,6 @@ class Chat:
             except:
                 self.remove_client(client)
 
-
     def handle(self, client):
         while True:
             try:
@@ -65,7 +65,7 @@ class Chat:
             print("Connected with " + str(addres))
 
             # Requests nick
-            client.send(("NICK").encode(settings.code))
+            client.send(json_utils.encode_system("NICK").encode(settings.code))
             nick = client.recv(1024).decode(settings.code)
             self.nicknames.append(nick)
             self.clients.append(client)
@@ -76,7 +76,7 @@ class Chat:
                 self.broadcast(("{}, pishi na angliyskom, byak".format(nick)).encode(settings.code))
 
             # Broadcast join
-            self.broadcast(("[{}] join to chat".format(nick).encode(settings.code)))
+            self.broadcast(json_utils.encode_message("[{}] join to chat".format(nick)).encode(settings.code))
 
             # Start threading with client
             thread = threading.Thread(target=self.handle, args=(client,))
