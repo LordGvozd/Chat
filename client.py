@@ -43,7 +43,9 @@ class Client:
     def write(self):
         while True:
             msg = "[{}] => {}".format(self.nickname, input(""))
-            self.client.send(msg.encode(settings.code))
+
+            json_msg = json_utils.encode_message(msg)
+            self.client.send(json_msg.encode(settings.code))
 
 
 if __name__ == "__main__":
