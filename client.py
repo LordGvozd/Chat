@@ -1,5 +1,6 @@
 import socket
 import threading
+import sys
 
 import settings
 import json_utils
@@ -32,6 +33,10 @@ class Client:
                     if (message["title"] == "SYSTEM"):
                         if(message["text"] == "NICK"):
                             self.client.send(self.nickname.encode(settings.code))
+                        if message["text"] == "EXIT":
+                            exit()
+
+
                     elif message["title"] == "MESSAGE":
                         print(message["text"])
                     else:
@@ -42,11 +47,28 @@ class Client:
     # Write message
     def write(self):
         while True:
-            msg = "[{}] => {}".format(self.nickname, input(""))
+            msg = input("")
 
-            json_msg = json_utils.encode_message(msg)
-            self.client.send(json_msg.encode(settings.code))
+            if msg != "":
+                json_msg = self.message_to_json(msg)
+                self.client.send(json_msg.encode(settings.code))
 
+    # Analysis message
+    def message_to_json(self, text):
+
+        # Command
+        if text[0] == "/":
+            text = text.replace("/", "")
+
+            return json_utils.encode_command(text)
+
+        # Just message
+        else:
+            return json_utils.encode_message("[{}] => {}".format(self.nickname, text))
+
+    def exit(self):
+        print("Goodbye!")
+        sys.exit()
 
 if __name__ == "__main__":
     client = Client(settings.client_port)

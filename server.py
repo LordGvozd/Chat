@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 
 import json_utils
 import settings
@@ -30,16 +31,17 @@ class Chat:
 
     # Remove client
     def remove_client(self, client):
-        index = self.clients.index(client)
+        if client in self.clients:
+            index = self.clients.index(client)
 
-        self.clients.remove(client)
-        client.close()
+            self.clients.remove(client)
+            client.close()
 
-        nick = self.nicknames[index]
-        self.nicknames.remove(nick)
+            nick = self.nicknames[index]
+            self.nicknames.remove(nick)
 
-        print("[{}] left the chat".format(nick))
-        self.broadcast("[{}] left the chat".format(nick).encode(settings.code))
+            print("[{}] left the chat".format(nick))
+            self.broadcast("[{}] left the chat".format(nick).encode(settings.code))
 
     # Sending message to all connected client
     def broadcast(self, msg, ignore_client="Not client, string"):
@@ -50,15 +52,23 @@ class Chat:
             except:
                 self.remove_client(client)
 
+    # Handle client
     def handle(self, client):
         while True:
             try:
-                message = client.recv(1024)
-                self.broadcast(message, client)
+                json_message = client.recv(1024)
+                message = json_utils.decode_json(json_message)
+
+                if message["title"] == "MESSAGE":
+                    self.broadcast(json_message, client)
+                elif message["title"] == "COMMAND":
+                    self.command_analysis(message["text"], client)
+
             except:
                 self.remove_client(client)
                 break
 
+    # Receive clients message
     def receive(self):
         while True:
             client, addres = self.server.accept()
@@ -81,6 +91,26 @@ class Chat:
             # Start threading with client
             thread = threading.Thread(target=self.handle, args=(client,))
             thread.start()
+
+    def get_nickname_by_client(self, client):
+        index = self.clients.index(client)
+        return self.nicknames[index]
+    # Analysis clients command
+    def command_analysis(self, text, client):
+
+        text = text.lower()
+        command = text.split(" ")
+
+        # Exit
+        if(command[0] == "exit"):
+            client.send((json_utils.encode_system("EXIT")).encode(settings.code))
+            self.remove_client(client)
+        elif command[0] == "status":
+            status = "[Addres] {} \n [Name] {}".format(client.getpeername(), self.get_nickname_by_client(client))
+            client.send(json_utils.encode_message(status).encode(settings.code))
+        else:
+            client.send((json_utils.encode_message("'{}' its not a command!!!".format(text))).encode(settings.code))
+
 
 
 if __name__ == "__main__":
