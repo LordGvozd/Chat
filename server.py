@@ -69,17 +69,22 @@ class Chat:
     # Handle client
     def handle(self, client, key):
         while True:
+            try:
+                json_message = client.recv(1024).decode(settings.code)
+                encrypted_message = json_utils.decode_json(json_message)
+                message = crypto.decrypt(encrypted_message, key)
 
-            json_message = client.recv(1024).decode(settings.code)
-            encrypted_message = json_utils.decode_json(json_message)
-            message = crypto.decrypt(encrypted_message, key)
+                if message["title"] == "MESSAGE":
+                    self.broadcast(json_message, client)
+                elif message["title"] == "COMMAND":
+                    self.command_analysis(message["text"], client)
 
-            if message["title"] == "MESSAGE":
-                self.broadcast(json_message, client)
-            elif message["title"] == "COMMAND":
-                self.command_analysis(message["text"], client)
+            except Exception as error:
 
+                print(error)
 
+                self.remove_client(client)
+                break
 
     # Receive clients message
     def receive(self):
