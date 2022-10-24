@@ -69,19 +69,17 @@ class Chat:
     # Handle client
     def handle(self, client, key):
         while True:
-            try:
-                json_message = client.recv(1024)
-                message = json_utils.decode_json(json_message)
-                #message = crypto.decrypt(encrypted_message, key)
 
-                if message["title"] == "MESSAGE":
-                    self.broadcast(json_message, client)
-                elif message["title"] == "COMMAND":
-                    self.command_analysis(message["text"], client)
+            json_message = client.recv(1024).decode(settings.code)
+            encrypted_message = json_utils.decode_json(json_message)
+            message = crypto.decrypt(encrypted_message, key)
 
-            except:
-                self.remove_client(client)
-                break
+            if message["title"] == "MESSAGE":
+                self.broadcast(json_message, client)
+            elif message["title"] == "COMMAND":
+                self.command_analysis(message["text"], client)
+
+
 
     # Receive clients message
     def receive(self):
@@ -133,7 +131,7 @@ class Chat:
             self.remove_client(client)
         elif command[0] == "status":
             status = "[Addres] {} \n [Name] {}".format(client.getpeername(), self.get_nickname_by_client(client))
-            self.send_message(json_utils.encode_message(status).encode(settings.code), client)
+            self.send_message(json_utils.encode_message(status), client)
         else:
             self.send_message((json_utils.encode_message("'{}' its not a command!!!".format(text))), client)
 

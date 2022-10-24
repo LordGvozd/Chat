@@ -2,11 +2,11 @@ import random
 
 
 def encrypt(text, key):
-    return text;
+    return text
 
 
 def decrypt(text, key):
-    return text;
+    return text
 
 
 symbols = r" !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~" \
