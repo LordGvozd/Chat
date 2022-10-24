@@ -2,11 +2,11 @@ import random
 
 
 def encrypt(text, key):
-    return cezar_encrypt(text, symbols, key)
+    return text;
 
 
 def decrypt(text, key):
-    return cezar_decrypt(text, symbols, key)
+    return text;
 
 
 symbols = r" !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~" \

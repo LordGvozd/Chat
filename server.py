@@ -71,8 +71,8 @@ class Chat:
         while True:
             try:
                 json_message = client.recv(1024)
-                encrypted_message = json_utils.decode_json(json_message)
-                message = crypto.decrypt(encrypted_message, key)
+                message = json_utils.decode_json(json_message)
+                #message = crypto.decrypt(encrypted_message, key)
 
                 if message["title"] == "MESSAGE":
                     self.broadcast(json_message, client)
@@ -121,7 +121,6 @@ class Chat:
         index = self.clients.index(client)
         return self.client_keys[index]
 
-
     # Analysis clients command
     def command_analysis(self, text, client):
 
@@ -129,7 +128,7 @@ class Chat:
         command = text.split(" ")
 
         # Exit
-        if(command[0] == "exit"):
+        if (command[0] == "exit"):
             self.send_message((json_utils.encode_system("EXIT")), client)
             self.remove_client(client)
         elif command[0] == "status":
