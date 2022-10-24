@@ -39,3 +39,4 @@ def encode_command(text):
 
 
 
+

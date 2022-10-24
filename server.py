@@ -4,6 +4,7 @@ import time
 
 import json_utils
 import settings
+import crypto
 
 
 class Chat:
@@ -16,6 +17,7 @@ class Chat:
 
         self.clients = []
         self.nicknames = []
+        self.client_keys = []
 
     # Starting server
     def start(self):
@@ -34,11 +36,17 @@ class Chat:
         if client in self.clients:
             index = self.clients.index(client)
 
+            # Remove client
             self.clients.remove(client)
             client.close()
 
+            # Remove nick
             nick = self.nicknames[index]
             self.nicknames.remove(nick)
+
+            # Remove key
+            key = self.client_keys[index]
+            self.client_keys.remove(key)
 
             print("[{}] left the chat".format(nick))
             self.broadcast("[{}] left the chat".format(nick).encode(settings.code))
@@ -48,16 +56,23 @@ class Chat:
         for client in self.clients:
             try:
                 if (client != ignore_client):
-                    client.send(msg)
+                    self.send_message(msg, client)
             except:
                 self.remove_client(client)
 
+    # Sending message to one client
+    def send_message(self, msg, client):
+        encrypted_message = crypto.encrypt(msg, self.get_key_by_client(client))
+
+        client.send(encrypted_message.encode(settings.code))
+
     # Handle client
-    def handle(self, client):
+    def handle(self, client, key):
         while True:
             try:
                 json_message = client.recv(1024)
-                message = json_utils.decode_json(json_message)
+                encrypted_message = json_utils.decode_json(json_message)
+                message = crypto.decrypt(encrypted_message, key)
 
                 if message["title"] == "MESSAGE":
                     self.broadcast(json_message, client)
@@ -73,28 +88,40 @@ class Chat:
         while True:
             client, addres = self.server.accept()
             print("Connected with " + str(addres))
+            self.clients.append(client)
+
+            # Requests key
+            key = int(client.recv(1024).decode(settings.code))
+            self.client_keys.append(key)
 
             # Requests nick
-            client.send(json_utils.encode_system("NICK").encode(settings.code))
+            self.send_message(json_utils.encode_system("NICK"), client)
             nick = client.recv(1024).decode(settings.code)
             self.nicknames.append(nick)
-            self.clients.append(client)
+
+
 
             try:
                 print("{} join".format(nick))
             except:
-                self.broadcast(("{}, pishi na angliyskom, byak".format(nick)).encode(settings.code))
+                self.broadcast(("{}, pishi na angliyskom, byak".format(nick)))
 
             # Broadcast join
-            self.broadcast(json_utils.encode_message("[{}] join to chat".format(nick)).encode(settings.code))
+            self.broadcast(json_utils.encode_message("[{}] join to chat".format(nick)))
 
             # Start threading with client
-            thread = threading.Thread(target=self.handle, args=(client,))
+            thread = threading.Thread(target=self.handle, args=(client, key, ))
             thread.start()
 
     def get_nickname_by_client(self, client):
         index = self.clients.index(client)
         return self.nicknames[index]
+
+    def get_key_by_client(self, client):
+        index = self.clients.index(client)
+        return self.client_keys[index]
+
+
     # Analysis clients command
     def command_analysis(self, text, client):
 
@@ -103,13 +130,13 @@ class Chat:
 
         # Exit
         if(command[0] == "exit"):
-            client.send((json_utils.encode_system("EXIT")).encode(settings.code))
+            self.send_message((json_utils.encode_system("EXIT")), client)
             self.remove_client(client)
         elif command[0] == "status":
             status = "[Addres] {} \n [Name] {}".format(client.getpeername(), self.get_nickname_by_client(client))
-            client.send(json_utils.encode_message(status).encode(settings.code))
+            self.send_message(json_utils.encode_message(status).encode(settings.code), client)
         else:
-            client.send((json_utils.encode_message("'{}' its not a command!!!".format(text))).encode(settings.code))
+            self.send_message((json_utils.encode_message("'{}' its not a command!!!".format(text))), client)
 
 
 
