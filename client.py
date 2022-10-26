@@ -28,17 +28,17 @@ class Client:
     def receive(self):
         while True:
 
-            message = None
+            encrypted_message = None
             encrypted_message = self.client.recv(1024).decode(settings.code)
 
-            if (encrypted_message):
+            if encrypted_message:
                 message_in_json = crypto.decrypt(encrypted_message, self.key)
                 message = json_utils.decode_json(message_in_json)
 
-                if (message["title"] == "SYSTEM"):
-                    if  (message["text"] == "NICK"):
+                if message["title"] == "SYSTEM":
+                    if message["text"] == "NICK":
                         self.client.send(self.nickname.encode(settings.code))  # Need
-                    if (message["text"] == "KEY"):
+                    if message["text"] == "KEY":
                         self.client.send(self.key.encode(settings.code))  # Need
                     if message["text"] == "EXIT":
                         exit()
@@ -48,8 +48,6 @@ class Client:
                 else:
                     print(message)
 
-
-
     # Write message
     def write(self):
         while True:
@@ -57,7 +55,8 @@ class Client:
 
             if msg != "":
                 json_msg = self.message_to_json(msg)
-                self.client.send(json_msg.encode(settings.code))
+                encrypted_msg = crypto.encrypt(json_msg, self.key)
+                self.client.send(encrypted_msg.encode(settings.code))
 
     # Send message
     def send_message(self, msg):

@@ -38,5 +38,6 @@ def encode_command(text):
     return encode_json(json_obj)
 
 
-
+if __name__ == "__main__":
+    print(encode_system("NICK"))
 

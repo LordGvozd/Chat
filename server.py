@@ -55,9 +55,10 @@ class Chat:
     def broadcast(self, msg, ignore_client="Not client, string"):
         for client in self.clients:
             try:
-                if (client != ignore_client):
+                if client != ignore_client:
                     self.send_message(msg, client)
-            except:
+            except Exception as e:
+                print("Error in broadcast " + str(e))
                 self.remove_client(client)
 
     # Sending message to one client
@@ -70,20 +71,18 @@ class Chat:
     def handle(self, client, key):
         while True:
             try:
-                json_message = client.recv(1024).decode(settings.code)
-                encrypted_message = json_utils.decode_json(json_message)
-                message = crypto.decrypt(encrypted_message, key)
+                encrypted_message = client.recv(1024).decode(settings.code)
+                json_message = crypto.decrypt(encrypted_message, key)
+                message = json_utils.decode_json(json_message)
 
                 if message["title"] == "MESSAGE":
                     self.broadcast(json_message, client)
                 elif message["title"] == "COMMAND":
                     self.command_analysis(message["text"], client)
-
-            except Exception as error:
-
-                print(error)
-
+            except Exception as e:
+                print(e)
                 self.remove_client(client)
+
                 break
 
     # Receive clients message
